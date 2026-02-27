@@ -1,0 +1,11 @@
+---
+app_name: my-solution-app
+namespace: aap-deploy
+replicas: 1
+nginx_image: nginx:1.27-alpine
+node_port: 30080
+
+# Variables used in the template (optional)
+app_title: "My Kubernetes Application"
+app_message: "Hello from Nginx running in Kubernetes!"
+app_version: "1.0"

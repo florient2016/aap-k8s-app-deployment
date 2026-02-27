@@ -1,0 +1,18 @@
+---
+galaxy_info:
+  author: florient2016
+  description: Deploys a simple Nginx app on Kubernetes using ConfigMap for index.html
+  company: itssolutions
+
+  license: MIT
+
+  min_ansible_version: "2.14"   # or whatever you need
+
+  platforms:
+    - name: GenericUNIX
+      versions:
+        - any
+
+  galaxy_tags: [nginx, kubernetes, configmap, nodeport]
+
+dependencies: []

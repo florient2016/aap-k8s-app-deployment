@@ -1,0 +1,66 @@
+---
+- name: Create ConfigMap from templated index.html
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: "{{ app_name }}-html"
+        namespace: "{{ namespace }}"
+      data:
+        index.html: "{{ lookup('ansible.builtin.template', 'index.html.j2') }}"
+
+- name: Create Deployment using the ConfigMap
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: "{{ app_name }}-deployment"
+        namespace: "{{ namespace }}"
+      spec:
+        replicas: "{{ replicas | int }}"
+        selector:
+          matchLabels:
+            app: "{{ app_name }}"
+        template:
+          metadata:
+            labels:
+              app: "{{ app_name }}"
+          spec:
+            containers:
+            - name: nginx
+              image: "{{ nginx_image }}"
+              ports:
+              - containerPort: 80
+                name: http
+              volumeMounts:
+              - name: html-volume
+                mountPath: /usr/share/nginx/html/index.html
+                subPath: index.html
+                readOnly: true
+            volumes:
+            - name: html-volume
+              configMap:
+                name: "{{ app_name }}-html"
+
+- name: Create NodePort Service
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: "{{ app_name }}-service"
+        namespace: "{{ namespace }}"
+      spec:
+        type: NodePort
+        ports:
+        - port: 80
+          targetPort: http
+          nodePort: "{{ node_port | int }}"
+          protocol: TCP
+        selector:
+          app: "{{ app_name }}"
