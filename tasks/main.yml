@@ -1,4 +1,14 @@
 ---
+- name: Ensure kubernetes Python library is installed on the target
+  become: true
+  ansible.builtin.pip:
+    name:
+      - kubernetes>=24.2.0
+      - pyyaml>=5.1      # usually pulled as dep, but safe
+      - jsonpatch
+    state: present
+    executable: pip3   # or /usr/bin/pip3 if needed
+
 - name: Create ConfigMap from templated index.html
   kubernetes.core.k8s:
     state: present
