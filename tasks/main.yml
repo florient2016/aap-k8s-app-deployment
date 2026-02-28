@@ -31,7 +31,7 @@
         name: "{{ app_name }}-deployment"
         namespace: "{{ namespace }}"
       spec:
-        replicas: "{{ replicas | int }}"
+        replicas: 3
         selector:
           matchLabels:
             app: "{{ app_name }}"
